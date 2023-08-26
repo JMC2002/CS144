@@ -1,0 +1,19 @@
+﻿{
+  "configurations": [
+    {
+      "name": "WSL-GCC-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeExecutable": "cmake",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "linux_x64" ],
+      "wslPath": "${defaultWSLPath}",
+      "intelliSenseMode": "linux-gcc-x64",
+      "remoteCopyAdditionalIncludeDirectories": [ "C:\\Users\\JMC\\AppData\\Local\\Microsoft\\Linux\\HeaderCache\\1.0\\1737912386\\usr\\include\\x86_64-linux-gnu" ]
+    }
+  ]
+}
