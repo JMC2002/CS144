@@ -13,7 +13,9 @@ class ByteStream
 protected:
   enum State { CLOSED, ERROR };
   uint64_t capacity_;
-  // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
+  uint64_t bytes_pushed_ {}; // 已写入的字节数
+  uint64_t bytes_popped_ {}; // 已弹出的字节数
+
   unsigned char flag {};	// 0: normal, 1: closed, 2: error
   std::queue<std::string> buffer_data {};
   std::queue<std::string_view> buffer_view {};
@@ -30,7 +32,6 @@ public:
 
 class Writer : public ByteStream
 {
-  uint64_t bytes_pushed_ {}; // 已写入的字节数
 public:
   void push( std::string data ); // 在可用容量允许的范围内向流中写入数据
 
@@ -44,7 +45,6 @@ public:
 
 class Reader : public ByteStream
 {
-  uint64_t bytes_popped_ {}; // 已弹出的字节数
 public:
   std::string_view peek() const; // 返回流中下一个数据块的只读视图
   void pop( uint64_t len );      // 从流中弹出指定长度的数据块
