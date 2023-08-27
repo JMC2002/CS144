@@ -15,7 +15,9 @@ void Writer::push( string data ) noexcept
     data.resize( len );             // 将 data 的长度截断为可写入的长度
   }
   // 将 data 写入到 buffer 中
-  buffer_data.push( move( data ) ); 
+  buffer_data.push( move( data ) );
+  if ( buffer_data.size() == 1)  // 写入前为空时需要更新 buffer_view
+    buffer_view = buffer_data.front();   
   // 更新已写入的数据长度
   bytes_pushed_ += len;
 }
@@ -47,7 +49,7 @@ uint64_t Writer::bytes_pushed() const noexcept
 
 string_view Reader::peek() const noexcept
 {
-  return buffer_data.empty() ? ""sv : string_view( buffer_data.front() ).substr( top_beg );
+  return buffer_view;
 }
 
 bool Reader::is_finished() const noexcept
@@ -70,12 +72,12 @@ void Reader::pop( uint64_t len ) noexcept
 
   // 将 buffer 中的数据弹出
   while ( len > 0 ) {
-    if ( len >= buffer_data.front().size() - top_beg ) {
-      len -= buffer_data.front().size() - top_beg;
+    if ( len >= buffer_view.size() ) {
+      len -= buffer_view.size();
       buffer_data.pop();
-      top_beg = 0;
+      buffer_view = buffer_data.front(); // 最开始就保证了 buffer_data 不为空
     } else {
-      top_beg = len;
+      buffer_view.remove_prefix( len );
       len = 0;
     }
   }
