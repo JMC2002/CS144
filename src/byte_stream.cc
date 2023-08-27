@@ -8,6 +8,9 @@ ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ) {}
 
 void Writer::push( string data )
 {
+  if ( flag ) {
+    throw runtime_error( ( flag & ( 1 << ERROR ) ) ? "写入错误!" : "已关闭!" );
+  }
   auto len = min( data.size(), available_capacity() );	// 确定可写入的数据长度
   if ( len == 0 ) { // 如果可写入的数据长度为0，说明已经写满了，抛出异常
     throw runtime_error( "无可用空间!" );
@@ -48,7 +51,7 @@ uint64_t Writer::bytes_pushed() const
 
 string_view Reader::peek() const
 {
-    return buffer_view.front();
+  return buffer_view.empty() ? ""sv : buffer_view.front();
 }
 
 bool Reader::is_finished() const
@@ -64,7 +67,7 @@ bool Reader::has_error() const
 void Reader::pop( uint64_t len )
 {
   if ( len > bytes_buffered() ) {
-    throw runtime_error( "无可用数据!" );
+    throw runtime_error( "可用数据数量不够!" );
   }
   // 将 buffer 中的数据弹出
   while ( len > 0 ) {
