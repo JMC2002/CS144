@@ -64,7 +64,7 @@ bool Reader::has_error() const
 void Reader::pop( uint64_t len )
 {
   if ( len > bytes_buffered() ) {
-    throw runtime_error( "可用数据数量不够!" );
+    return;
   }
   // 更新已弹出的数据长度
   bytes_popped_ += len;
