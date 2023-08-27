@@ -18,7 +18,7 @@ protected:
 
   unsigned char flag {};	// 0: normal, 1: closed, 2: error
   std::queue<std::string> buffer_data {};
-  std::string_view buffer_view {};
+  size_t top_beg {};
 
 public:
   explicit ByteStream( uint64_t capacity );
