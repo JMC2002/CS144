@@ -6,7 +6,7 @@ using namespace std;
 
 ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ) {}
 
-void Writer::push( string data )
+void Writer::push( string data ) noexcept
 {
   auto len = min( data.size(), available_capacity() );	// 确定可写入的数据长度
   if ( len == 0 ) { // 如果可写入的数据长度为0，说明已经写满了，返回
@@ -21,47 +21,47 @@ void Writer::push( string data )
   bytes_pushed_ += len;
 }
 
-void Writer::close()
+void Writer::close() noexcept
 {
   flag |= ( 1 << CLOSED );
 }
 
-void Writer::set_error()
+void Writer::set_error() noexcept
 {
   flag |= ( 1 << ERROR );
 }
 
-bool Writer::is_closed() const
+bool Writer::is_closed() const noexcept
 {
   return flag & ( 1 << CLOSED );
 }
 
-uint64_t Writer::available_capacity() const
+uint64_t Writer::available_capacity() const noexcept
 {
   return capacity_ - reader().bytes_buffered();
 }
 
-uint64_t Writer::bytes_pushed() const
+uint64_t Writer::bytes_pushed() const noexcept
 {
   return bytes_pushed_;
 }
 
-string_view Reader::peek() const
+string_view Reader::peek() const noexcept
 {
   return buffer_view.empty() ? ""sv : buffer_view.front();
 }
 
-bool Reader::is_finished() const
+bool Reader::is_finished() const noexcept
 {
   return writer().is_closed() && ( bytes_buffered() == 0 );
 }
 
-bool Reader::has_error() const
+bool Reader::has_error() const noexcept
 {
   return flag & ( 1 << ERROR );
 }
 
-void Reader::pop( uint64_t len )
+void Reader::pop( uint64_t len ) noexcept
 {
   if ( len > bytes_buffered() ) {
     return;
@@ -83,12 +83,12 @@ void Reader::pop( uint64_t len )
   }
 }
 
-uint64_t Reader::bytes_buffered() const
+uint64_t Reader::bytes_buffered() const noexcept
 {
   return writer().bytes_pushed() - bytes_popped();
 }
 
-uint64_t Reader::bytes_popped() const
+uint64_t Reader::bytes_popped() const noexcept
 {
   return bytes_popped_;
 }
