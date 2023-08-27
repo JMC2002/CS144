@@ -17,7 +17,7 @@ protected:
   uint64_t bytes_popped_ {}; // 已弹出的字节数
 
   unsigned char flag {};	// 0: normal, 1: closed, 2: error
-  std::queue<std::string> buffer_data {};
+  std::deque<std::string> buffer_data {};
   std::queue<std::string_view> buffer_view {};
 
 public:

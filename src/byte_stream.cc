@@ -18,8 +18,8 @@ void Writer::push( string data )
     data.resize( len );             // 将 data 的长度截断为可写入的长度
   }
   // 将 data 写入到 buffer 中
-  buffer_view.emplace( data );
-  buffer_data.emplace( move( data ) );
+  buffer_data.emplace_back( move( data ) );
+  buffer_view.emplace( buffer_data.back() );
   // 更新已写入的数据长度
   bytes_pushed_ += len;
 }
@@ -74,7 +74,7 @@ void Reader::pop( uint64_t len )
     auto& front = buffer_view.front();
     if ( len >= front.size() ) {
       len -= front.size();
-      buffer_data.pop();
+      buffer_data.pop_front();
       buffer_view.pop();
     } else {
       front.remove_prefix( len );
