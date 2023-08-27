@@ -17,7 +17,7 @@ protected:
 public:
   explicit ByteStream( uint64_t capacity );
 
-  // Helper functions (provided) to access the ByteStream's Reader and Writer interfaces
+  // 提供ByteStream的 reader 和 writer 接口的辅助函数
   Reader& reader();
   const Reader& reader() const;
   Writer& writer();
@@ -27,27 +27,27 @@ public:
 class Writer : public ByteStream
 {
 public:
-  void push( std::string data ); // Push data to stream, but only as much as available capacity allows.
+  void push( std::string data ); // 在可用容量允许的范围内向流中写入数据
 
-  void close();     // Signal that the stream has reached its ending. Nothing more will be written.
-  void set_error(); // Signal that the stream suffered an error.
+  void close();     // 关闭流，不允许再向流中写入数据
+  void set_error(); // 流中出现错误，置位错误标志
 
-  bool is_closed() const;              // Has the stream been closed?
-  uint64_t available_capacity() const; // How many bytes can be pushed to the stream right now?
-  uint64_t bytes_pushed() const;       // Total number of bytes cumulatively pushed to the stream
+  bool is_closed() const;              // 判断流是否已关闭
+  uint64_t available_capacity() const; // 计算流中剩余可用容量
+  uint64_t bytes_pushed() const;       // 计算流中已写入的字节数
 };
 
 class Reader : public ByteStream
 {
 public:
-  std::string_view peek() const; // Peek at the next bytes in the buffer
-  void pop( uint64_t len );      // Remove `len` bytes from the buffer
+  std::string_view peek() const; // 返回流中下一个数据块的只读视图
+  void pop( uint64_t len );      // 从流中弹出指定长度的数据块
 
-  bool is_finished() const; // Is the stream finished (closed and fully popped)?
-  bool has_error() const;   // Has the stream had an error?
+  bool is_finished() const; // 判断流是否已关闭且所有数据块都已弹出
+  bool has_error() const;   // 判断流是否出现错误
 
-  uint64_t bytes_buffered() const; // Number of bytes currently buffered (pushed and not popped)
-  uint64_t bytes_popped() const;   // Total number of bytes cumulatively popped from stream
+  uint64_t bytes_buffered() const; // 计算当前流中缓存的字节数
+  uint64_t bytes_popped() const;   // 计算流中已弹出的字节数
 };
 
 /*
