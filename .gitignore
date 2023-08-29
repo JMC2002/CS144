@@ -5,4 +5,4 @@
 /.cache
 /.vs
 /out
-*.json
+CMakeSettings.json
