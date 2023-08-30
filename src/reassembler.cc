@@ -80,12 +80,11 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
   if (first_index == next_index_) {
     push_to_output( move( data ), output );
   }
-  else {
-    // 将data插入buffer_
+  else { // 否则, 将data插入buffer_
     buffer_push( first_index, end_index - 1, data );
-    had_last_ |= is_last_substring;
   }
-
+  had_last_ |= is_last_substring;
+  
   // 尝试将buffer_中的数据写入output
   buffer_pop(output);
 }
