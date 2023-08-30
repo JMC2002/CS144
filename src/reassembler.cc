@@ -10,8 +10,9 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   if (lef != end) l = min( l, get<0>( *lef ) );
   if (rig != end) r = max( r, get<1>( *prev( rig ) ) );
   buffer_size_ += r - l;
-
-  if (data.size() == r - l && lef == end) {	// 说明buffer_中没有data重叠的部分
+  
+  if ( auto pre = prev( rig ); data.size() == r - l
+       && ( pre == end || get<0>( *pre ) != l && get<1>( *pre ) != r ) ) { // 说明buffer_中没有data重叠的部分
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
   }
