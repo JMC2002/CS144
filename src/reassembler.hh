@@ -1,17 +1,22 @@
+/*****************************************************************//**
+ * \file   reassembler.hh
+ * \brief  实现一个 Reassembler 类, 用于将乱序的字符串重新组装成有序的
+ *         字符串，并推入字节流.
+ * 
+ * \author JMC
+ * \date   August 2023
+ *********************************************************************/
 #pragma once
 
 #include "byte_stream.hh"
 
 #include <string>
-#include <ranges>
 #include <list>
 #include <tuple>
-#include <algorithm>
 
 class Reassembler
 {
 	bool had_last_ {};	// 是否已经插入了最后一个字符串
-	// [next_index_, last_index_]
 	uint64_t next_index_ {};	// 下一个要写入的字节的索引
 	uint64_t buffer_size_ {};	// buffer_中的字节数
 	std::list<std::tuple<uint64_t, uint64_t, std::string>> buffer_ {};

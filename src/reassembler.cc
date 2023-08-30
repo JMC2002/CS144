@@ -1,4 +1,14 @@
+/*****************************************************************//**
+ * \file   reassembler.cc
+ * \brief  实现一个 Reassembler 类, 用于将乱序的字符串重新组装成有序的
+ *         字符串，并推入字节流.
+ * \author JMC
+ * \date   August 2023
+ *********************************************************************/
 #include "reassembler.hh"
+
+#include <ranges>
+#include <algorithm>
 
 using namespace std;
 void Reassembler::push_to_output( std::string data, Writer& output ) {
@@ -36,8 +46,6 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   ranges::copy(data, s.begin() + first_index - l);
   buffer_.emplace( buffer_.erase( lef, rig ), l, r, move( s ) );
 }
-
-
 
 void Reassembler::buffer_pop( Writer& output ) {
   while ( !buffer_.empty() && get<0>( buffer_.front() ) == next_index_ ) {
