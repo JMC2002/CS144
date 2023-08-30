@@ -16,7 +16,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   }
 
   buffer_size_ += 1 + r - l;
-  if ( data.size() == r - l + 1 ) { // 当buffer_中没有data重叠的部分
+  if ( data.size() == r - l + 1 && lef == rig ) { // 当buffer_中没有data重叠的部分
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
   }
