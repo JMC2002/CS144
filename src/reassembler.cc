@@ -2,7 +2,6 @@
 
 using namespace std;
 void Reassembler::push_to_output( std::string data, Writer& output ) {
-  buffer_size_ -= data.size();
   next_index_ += data.size();
   output.push( move( data ) );
 }
@@ -42,6 +41,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 void Reassembler::buffer_pop( Writer& output ) {
   while ( !buffer_.empty() && get<0>( buffer_.front() ) == next_index_ ) {
     auto& [a, b, c] = buffer_.front();
+    buffer_size_ -= c.size();
     push_to_output( move( c ), output ); 
     buffer_.pop_front();
   }
