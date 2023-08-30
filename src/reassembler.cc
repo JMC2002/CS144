@@ -11,7 +11,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   if (rig != end) r = max( r, get<1>( *prev( rig ) ) );
   
   // 当data已在buffer_中时，直接返回
-  if ( lef != end && get<0>( *lef ) != l && get<1>( *lef ) != r ) {
+  if ( lef != end && get<0>( *lef ) == l && get<1>( *lef ) == r ) {
     return;
   }
 
