@@ -77,10 +77,12 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
   }
 
   // 若data可以直接写入output, 则直接写入
-  if (first_index == next_index_) {
+  if ( first_index == next_index_ ) {
+    if ( buffer_.size() ) { // 若重叠, 则调整data的范围
+      data.resize( max( end_index, get<0>( buffer_.front() ) ) - first_index );
+    }
     push_to_output( move( data ), output );
-  }
-  else { // 否则, 将data插入buffer_
+  } else { // 否则, 将data插入buffer_
     buffer_push( first_index, end_index - 1, data );
   }
   had_last_ |= is_last_substring;
