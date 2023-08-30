@@ -15,7 +15,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
     return;
   }
 
-  buffer_size_ += r - l;
+  buffer_size_ += r - l + 1;
   if ( data.size() == r - l + 1 ) { // 当buffer_中没有data重叠的部分
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
@@ -53,7 +53,7 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     }
     return;
   }
-  auto end_index = first_index + data.size();                  // data: [first_index, end_index)
+  auto end_index = first_index + data.size();                  // data: [first_index, end_index]
   auto last_index = next_index_ + output.available_capacity(); // 可用范围: [next_index_, last_index)
   if ( last_index <= next_index_ || first_index >= last_index ) {
     return; // 不在可用范围内, 直接返回
