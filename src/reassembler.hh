@@ -3,9 +3,24 @@
 #include "byte_stream.hh"
 
 #include <string>
+#include <map>
+#include <ranges>
+#include <list>
+#include <tuple>
+#include <algorithm>
 
 class Reassembler
 {
+	bool had_last_ {};	// 是否已经插入了最后一个字符串
+	// [next_index_, last_index_]
+	uint64_t next_index_ {};	// 下一个要写入的字节的索引
+	uint64_t buffer_size_ {};	// buffer_中的字节数
+	std::list<std::tuple<uint64_t, uint64_t, std::string>> buffer_ {};
+
+	void buffer_push( uint64_t first_index, uint64_t last_index, std::string data );
+
+	void buffer_pop(Writer& output);
+
 public:
   /*
    * Insert a new substring to be reassembled into a ByteStream.
