@@ -17,10 +17,22 @@ class Reassembler
 	uint64_t buffer_size_ {};	// buffer_中的字节数
 	std::list<std::tuple<uint64_t, uint64_t, std::string>> buffer_ {};
 
+	/**
+	 * \breif 将data推入output流.
+	 */
 	void push_to_output(std::string data, Writer& output);
 
+	/**
+	 * \brief 将data推入buffer暂存区.
+	 * \param first_index data的第一个字节的索引
+	 * \param last_index  data的最后一个字节的索引
+	 * \param data        待推入的字符串, 下标为[first_index, last_index]闭区间
+	 */
 	void buffer_push( uint64_t first_index, uint64_t last_index, std::string data );
 
+	/**
+	 * 尝试将buffer中的串推入output流.
+	 */
 	void buffer_pop(Writer& output);
 
 public:

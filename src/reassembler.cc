@@ -8,6 +8,7 @@ void Reassembler::push_to_output( std::string data, Writer& output ) {
 
 void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::string data )
 {
+  // 合并区间
   auto l = first_index, r = last_index;
   auto beg = buffer_.begin(), end = buffer_.end();
   auto lef = lower_bound( beg, end, l, []( auto& a, auto& b ) { return get<1>( a ) < b; } );
