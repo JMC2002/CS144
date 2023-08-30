@@ -9,14 +9,18 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   auto rig = upper_bound( lef, end, r, []( auto& b, auto& a ) { return get<0>( a ) > b; } );
   if (lef != end) l = min( l, get<0>( *lef ) );
   if (rig != end) r = max( r, get<1>( *prev( rig ) ) );
-  buffer_size_ += r - l;
   
-  if ( auto pre = prev( rig ); data.size() == r - l
-       && ( pre == end || ( get<0>( *pre ) != l && get<1>( *pre ) != r ) ) ) { // 说明buffer_中没有data重叠的部分
+  // 当data已在buffer_中时，直接返回
+  if ( lef != end && get<0>( *lef ) != l && get<1>( *lef ) != r ) {
+    return;
+  }
+
+  buffer_size_ += r - l;
+  if ( data.size() == r - l + 1 ) { // 当buffer_中没有data重叠的部分
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
   }
-  string s( r - l, 0 );
+  string s( r - l + 1, 0 );
 
   for ( auto&& it : views::iota( lef, rig ) ) {
 	auto& [a, b, c] = *it;
@@ -32,7 +36,7 @@ void Reassembler::buffer_pop( Writer& output ) {
     auto& [a, b, c] = buffer_.front();
     buffer_size_ -= c.size();
     output.push( move( c ) );
-    next_index_ = b;
+    next_index_ = b + 1;
     buffer_.pop_front();
   }
 
@@ -67,7 +71,7 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
   }
 
   // 将data插入buffer_
-  buffer_push(first_index, end_index, data);
+  buffer_push(first_index, end_index - 1, data);
   had_last_ |= is_last_substring;
 
   // 将buffer_中的数据写入output
