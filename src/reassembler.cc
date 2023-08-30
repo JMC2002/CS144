@@ -77,7 +77,7 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
   }
 
   // 若data可以直接写入output, 则直接写入
-  if ( first_index == next_index_ ) {
+  if ( first_index == next_index_ && ( buffer_.empty() || end_index < get<1>( buffer_.front() ) + 2 ) ) {
     if ( buffer_.size() ) { // 若重叠, 则调整data的范围
       data.resize( min( end_index, get<0>( buffer_.front() ) ) - first_index );
     }
