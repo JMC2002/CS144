@@ -15,12 +15,12 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
     return;
   }
 
-  buffer_size_ += r - l + 1;
+  buffer_size_ += 1 + r - l;
   if ( data.size() == r - l + 1 ) { // 当buffer_中没有data重叠的部分
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
   }
-  string s( r - l + 1, 0 );
+  string s( 1 + r - l, 0 );
 
   for ( auto&& it : views::iota( lef, rig ) ) {
 	auto& [a, b, c] = *it;
