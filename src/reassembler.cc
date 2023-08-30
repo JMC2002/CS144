@@ -16,7 +16,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 	return;
   }
   string s( r - l, 0 );
-  // for (auto it = lef; it != rig; ++it) {
+
   for ( auto&& it : views::iota( lef, rig ) ) {
 	auto& [a, b, c] = *it;
 	buffer_size_ -= c.size();
@@ -42,7 +42,6 @@ void Reassembler::buffer_pop( Writer& output ) {
 
 void Reassembler::insert( uint64_t first_index, string data, bool is_last_substring, Writer& output )
 {
-  //had_last_ |= is_last_substring;
   if ( data.empty() ) {
     if ( is_last_substring ) {
       output.close();
@@ -56,8 +55,8 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
   }
 
   // µ÷ÕûdataµÄ·¶Î§
-  if ( last_index > end_index ) {
-    data.resize( end_index - first_index );
+  if ( last_index < end_index ) {
+    data.resize( last_index - first_index );
     is_last_substring = false;
   }
   if ( first_index < next_index_ ) {
