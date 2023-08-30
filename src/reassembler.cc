@@ -8,7 +8,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   auto lef = lower_bound( beg, end, l, []( auto& a, auto& b ) { return get<1>( a ) < b; } );
   auto rig = upper_bound( lef, end, r, []( auto& b, auto& a ) { return get<0>( a ) > b; } );
   if (lef != end) l = min( l, get<0>( *lef ) );
-  if (rig != end) r = max( r, get<1>( *prev( rig ) ) );
+  if (rig != beg) r = max( r, get<1>( *prev( rig ) ) );
   
   // 当data已在buffer_中时，直接返回
   if ( lef != end && get<0>( *lef ) == l && get<1>( *lef ) == r ) {
