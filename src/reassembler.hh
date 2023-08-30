@@ -17,6 +17,8 @@ class Reassembler
 	uint64_t buffer_size_ {};	// buffer_中的字节数
 	std::list<std::tuple<uint64_t, uint64_t, std::string>> buffer_ {};
 
+	void push_to_output(std::string data, Writer& output);
+
 	void buffer_push( uint64_t first_index, uint64_t last_index, std::string data );
 
 	void buffer_pop(Writer& output);

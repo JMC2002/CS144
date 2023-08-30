@@ -1,6 +1,12 @@
 #include "reassembler.hh"
 
 using namespace std;
+void Reassembler::push_to_output( std::string data, Writer& output ) {
+  buffer_size_ -= data.size();
+  next_index_ += data.size();
+  output.push( move( data ) );
+}
+
 void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::string data )
 {
   auto l = first_index, r = last_index;
@@ -31,12 +37,12 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   buffer_.emplace( buffer_.erase( lef, rig ), l, r, move( s ) );
 }
 
+
+
 void Reassembler::buffer_pop( Writer& output ) {
   while ( !buffer_.empty() && get<0>( buffer_.front() ) == next_index_ ) {
     auto& [a, b, c] = buffer_.front();
-    buffer_size_ -= c.size();
-    output.push( move( c ) );
-    next_index_ = b + 1;
+    push_to_output( move( c ), output ); 
     buffer_.pop_front();
   }
 
@@ -70,11 +76,17 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     first_index = next_index_;
   }
 
-  // 将data插入buffer_
-  buffer_push(first_index, end_index - 1, data);
-  had_last_ |= is_last_substring;
+  // 若data可以直接写入output, 则直接写入
+  if (first_index == next_index_) {
+    push_to_output( move( data ), output );
+  }
+  else {
+    // 将data插入buffer_
+    buffer_push( first_index, end_index - 1, data );
+    had_last_ |= is_last_substring;
+  }
 
-  // 将buffer_中的数据写入output
+  // 尝试将buffer_中的数据写入output
   buffer_pop(output);
 }
 
