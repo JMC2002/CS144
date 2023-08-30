@@ -29,9 +29,9 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 void Reassembler::buffer_pop( Writer& output ) {
   while ( !buffer_.empty() && get<0>( buffer_.front() ) == next_index_ ) {
     auto& [a, b, c] = buffer_.front();
+    buffer_size_ -= c.size();
     output.push( move( c ) );
     next_index_ = b;
-    buffer_size_ -= c.size();
     buffer_.pop_front();
   }
 
