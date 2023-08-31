@@ -37,7 +37,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 	return;
   }
   string s( move( get<2>( *lef++ ) ) );
-  s.resize( l + r - 1 );
+  s.resize( 1 + r - l );
 
   for ( auto&& it : views::iota( lef, rig ) ) {
 	auto& [a, b, c] = *it;
@@ -45,7 +45,7 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
     ranges::copy(c, s.begin() + a - l);
   }
   ranges::copy(data, s.begin() + first_index - l);
-  buffer_.emplace( buffer_.erase( lef, rig ), l, r, move( s ) );
+  buffer_.emplace( buffer_.erase( --lef, rig ), l, r, move( s ) );
 }
 
 void Reassembler::buffer_pop( Writer& output ) {
