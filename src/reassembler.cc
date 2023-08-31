@@ -1,17 +1,19 @@
-﻿/*****************************************************************//**
- * \file   reassembler.cc
- * \brief  实现一个 Reassembler 类, 用于将乱序的字符串重新组装成有序的
- *         字符串，并推入字节流.
- * \author JMC
- * \date   August 2023
- *********************************************************************/
+﻿/*****************************************************************/ /**
+                                                                     * \file   reassembler.cc
+                                                                     * \brief  实现一个 Reassembler 类,
+                                                                     *用于将乱序的字符串重新组装成有序的
+                                                                     *         字符串，并推入字节流.
+                                                                     * \author JMC
+                                                                     * \date   August 2023
+                                                                     *********************************************************************/
 #include "reassembler.hh"
 
-#include <ranges>
 #include <algorithm>
+#include <ranges>
 
 using namespace std;
-void Reassembler::push_to_output( std::string data, Writer& output ) {
+void Reassembler::push_to_output( std::string data, Writer& output )
+{
   next_index_ += data.size();
   output.push( move( data ) );
 }
@@ -23,9 +25,11 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   auto beg = buffer_.begin(), end = buffer_.end();
   auto lef = lower_bound( beg, end, l, []( auto& a, auto& b ) { return get<1>( a ) < b; } );
   auto rig = upper_bound( lef, end, r, []( auto& b, auto& a ) { return get<0>( a ) > b; } );
-  if (lef != end) l = min( l, get<0>( *lef ) );
-  if (rig != beg) r = max( r, get<1>( *prev( rig ) ) );
-  
+  if ( lef != end )
+    l = min( l, get<0>( *lef ) );
+  if ( rig != beg )
+    r = max( r, get<1>( *prev( rig ) ) );
+
   // 当data已在buffer_中时，直接返回
   if ( lef != end && get<0>( *lef ) == l && get<1>( *lef ) == r ) {
     return;
@@ -33,29 +37,40 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 
   buffer_size_ += 1 + r - l;
   if ( lef == rig ) { // 当buffer_中没有data重叠的部分
-	buffer_.emplace( rig, l, r, move( data ) );
-	return;
+    buffer_.emplace( rig, l, r, move( data ) );
+    return;
   }
 
   // 从左边界开始合并
-  buffer_size_ -= get<2>( *lef ).size();
-  string s( move( get<2>( *lef ) ) );
+  string s;
+
+  auto& [fa, fb, fc] = *lef;
+  buffer_size_ -= fc.size();
+  if ( fa == l ) {
+    fc.resize( min( l + fc.size(), first_index ) - l );
+    s = move( fc );
+    ranges::copy( data, s.begin() + first_index - 1 );
+  } else {
+    data.resize( min( l + data.size(), fa ) - l );
+	s = move( data );
+	ranges::copy( fc, s.begin() + fa - 1 );
+  }
   s.resize( 1 + r - l );
 
   for ( auto&& it : views::iota( next( lef ), rig ) ) {
-	auto& [a, b, c] = *it;
-	buffer_size_ -= c.size();
-    ranges::copy(c, s.begin() + a - l);
+    auto& [a, b, c] = *it;
+    buffer_size_ -= c.size();
+    ranges::copy( c, s.begin() + a - l );
   }
-  ranges::copy(data, s.begin() + first_index - l);
   buffer_.emplace( buffer_.erase( lef, rig ), l, r, move( s ) );
 }
 
-void Reassembler::buffer_pop( Writer& output ) {
+void Reassembler::buffer_pop( Writer& output )
+{
   while ( !buffer_.empty() && get<0>( buffer_.front() ) == next_index_ ) {
     auto& [a, b, c] = buffer_.front();
     buffer_size_ -= c.size();
-    push_to_output( move( c ), output ); 
+    push_to_output( move( c ), output );
     buffer_.pop_front();
   }
 
@@ -99,9 +114,9 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     buffer_push( first_index, end_index - 1, data );
   }
   had_last_ |= is_last_substring;
-  
+
   // 尝试将buffer_中的数据写入output
-  buffer_pop(output);
+  buffer_pop( output );
 }
 
 uint64_t Reassembler::bytes_pending() const
