@@ -1,7 +1,7 @@
-/*****************************************************************//**
+ï»¿/*****************************************************************//**
  * \file   reassembler.hh
- * \brief  ÊµÏÖÒ»¸ö Reassembler Àà, ÓÃÓÚ½«ÂÒĞòµÄ×Ö·û´®ÖØĞÂ×é×°³ÉÓĞĞòµÄ
- *         ×Ö·û´®£¬²¢ÍÆÈë×Ö½ÚÁ÷.
+ * \brief  å®ç°ä¸€ä¸ª Reassembler ç±», ç”¨äºå°†ä¹±åºçš„å­—ç¬¦ä¸²é‡æ–°ç»„è£…æˆæœ‰åºçš„
+ *         å­—ç¬¦ä¸²ï¼Œå¹¶æ¨å…¥å­—èŠ‚æµ.
  * 
  * \author JMC
  * \date   August 2023
@@ -16,26 +16,26 @@
 
 class Reassembler
 {
-	bool had_last_ {};	// ÊÇ·ñÒÑ¾­²åÈëÁË×îºóÒ»¸ö×Ö·û´®
-	uint64_t next_index_ {};	// ÏÂÒ»¸öÒªĞ´ÈëµÄ×Ö½ÚµÄË÷Òı
-	uint64_t buffer_size_ {};	// buffer_ÖĞµÄ×Ö½ÚÊı
+	bool had_last_ {};	// æ˜¯å¦å·²ç»æ’å…¥äº†æœ€åä¸€ä¸ªå­—ç¬¦ä¸²
+	uint64_t next_index_ {};	// ä¸‹ä¸€ä¸ªè¦å†™å…¥çš„å­—èŠ‚çš„ç´¢å¼•
+	uint64_t buffer_size_ {};	// buffer_ä¸­çš„å­—èŠ‚æ•°
 	std::list<std::tuple<uint64_t, uint64_t, std::string>> buffer_ {};
 
 	/**
-	 * \breif ½«dataÍÆÈëoutputÁ÷.
+	 * \breif å°†dataæ¨å…¥outputæµ.
 	 */
 	void push_to_output(std::string data, Writer& output);
 
 	/**
-	 * \brief ½«dataÍÆÈëbufferÔİ´æÇø.
-	 * \param first_index dataµÄµÚÒ»¸ö×Ö½ÚµÄË÷Òı
-	 * \param last_index  dataµÄ×îºóÒ»¸ö×Ö½ÚµÄË÷Òı
-	 * \param data        ´ıÍÆÈëµÄ×Ö·û´®, ÏÂ±êÎª[first_index, last_index]±ÕÇø¼ä
+	 * \brief å°†dataæ¨å…¥bufferæš‚å­˜åŒº.
+	 * \param first_index dataçš„ç¬¬ä¸€ä¸ªå­—èŠ‚çš„ç´¢å¼•
+	 * \param last_index  dataçš„æœ€åä¸€ä¸ªå­—èŠ‚çš„ç´¢å¼•
+	 * \param data        å¾…æ¨å…¥çš„å­—ç¬¦ä¸², ä¸‹æ ‡ä¸º[first_index, last_index]é—­åŒºé—´
 	 */
 	void buffer_push( uint64_t first_index, uint64_t last_index, std::string data );
 
 	/**
-	 * ³¢ÊÔ½«bufferÖĞµÄ´®ÍÆÈëoutputÁ÷.
+	 * å°è¯•å°†bufferä¸­çš„ä¸²æ¨å…¥outputæµ.
 	 */
 	void buffer_pop(Writer& output);
 

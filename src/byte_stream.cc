@@ -1,4 +1,4 @@
-#include <stdexcept>
+ï»¿#include <stdexcept>
 
 #include "byte_stream.hh"
 
@@ -8,17 +8,17 @@ ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ) {}
 
 void Writer::push( string data ) noexcept
 {
-  auto len = min( data.size(), available_capacity() );	// È·¶¨¿ÉĞ´ÈëµÄÊı¾İ³¤¶È
-  if ( len == 0 ) { // Èç¹û¿ÉĞ´ÈëµÄÊı¾İ³¤¶ÈÎª0£¬ËµÃ÷ÒÑ¾­Ğ´ÂúÁË£¬·µ»Ø
+  auto len = min( data.size(), available_capacity() );	// ç¡®å®šå¯å†™å…¥çš„æ•°æ®é•¿åº¦
+  if ( len == 0 ) { // å¦‚æœå¯å†™å…¥çš„æ•°æ®é•¿åº¦ä¸º0ï¼Œè¯´æ˜å·²ç»å†™æ»¡äº†ï¼Œè¿”å›
     return;
-  } else if ( len < data.size() ) { // Èç¹û¿ÉĞ´ÈëµÄÊı¾İ³¤¶ÈĞ¡ÓÚ data µÄ³¤¶È£¬ËµÃ÷Ö»ÄÜĞ´Èë²¿·ÖÊı¾İ
-    data.resize( len );             // ½« data µÄ³¤¶È½Ø¶ÏÎª¿ÉĞ´ÈëµÄ³¤¶È
+  } else if ( len < data.size() ) { // å¦‚æœå¯å†™å…¥çš„æ•°æ®é•¿åº¦å°äº data çš„é•¿åº¦ï¼Œè¯´æ˜åªèƒ½å†™å…¥éƒ¨åˆ†æ•°æ®
+    data.resize( len );             // å°† data çš„é•¿åº¦æˆªæ–­ä¸ºå¯å†™å…¥çš„é•¿åº¦
   }
-  // ½« data Ğ´Èëµ½ buffer ÖĞ
+  // å°† data å†™å…¥åˆ° buffer ä¸­
   buffer_data.push( move( data ) );
-  if ( buffer_data.size() == 1)  // Ğ´ÈëÇ°Îª¿ÕÊ±ĞèÒª¸üĞÂ buffer_view
+  if ( buffer_data.size() == 1)  // å†™å…¥å‰ä¸ºç©ºæ—¶éœ€è¦æ›´æ–° buffer_view
     buffer_view = buffer_data.front();   
-  // ¸üĞÂÒÑĞ´ÈëµÄÊı¾İ³¤¶È
+  // æ›´æ–°å·²å†™å…¥çš„æ•°æ®é•¿åº¦
   bytes_pushed_ += len;
 }
 
@@ -67,15 +67,15 @@ void Reader::pop( uint64_t len ) noexcept
   if ( len > bytes_buffered() ) {
     return;
   }
-  // ¸üĞÂÒÑµ¯³öµÄÊı¾İ³¤¶È
+  // æ›´æ–°å·²å¼¹å‡ºçš„æ•°æ®é•¿åº¦
   bytes_popped_ += len;
 
-  // ½« buffer ÖĞµÄÊı¾İµ¯³ö
+  // å°† buffer ä¸­çš„æ•°æ®å¼¹å‡º
   while ( len > 0 ) {
     if ( len >= buffer_view.size() ) {
       len -= buffer_view.size();
       buffer_data.pop();
-      buffer_view = buffer_data.front(); // ×î¿ªÊ¼¾Í±£Ö¤ÁË buffer_data ²»Îª¿Õ
+      buffer_view = buffer_data.front(); // æœ€å¼€å§‹å°±ä¿è¯äº† buffer_data ä¸ä¸ºç©º
     } else {
       buffer_view.remove_prefix( len );
       len = 0;

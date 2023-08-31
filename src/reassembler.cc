@@ -1,7 +1,7 @@
-/*****************************************************************//**
+ï»¿/*****************************************************************//**
  * \file   reassembler.cc
- * \brief  ÊµÏÖÒ»¸ö Reassembler Àà, ÓÃÓÚ½«ÂÒĞòµÄ×Ö·û´®ÖØĞÂ×é×°³ÉÓĞĞòµÄ
- *         ×Ö·û´®£¬²¢ÍÆÈë×Ö½ÚÁ÷.
+ * \brief  å®ç°ä¸€ä¸ª Reassembler ç±», ç”¨äºå°†ä¹±åºçš„å­—ç¬¦ä¸²é‡æ–°ç»„è£…æˆæœ‰åºçš„
+ *         å­—ç¬¦ä¸²ï¼Œå¹¶æ¨å…¥å­—èŠ‚æµ.
  * \author JMC
  * \date   August 2023
  *********************************************************************/
@@ -18,7 +18,7 @@ void Reassembler::push_to_output( std::string data, Writer& output ) {
 
 void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::string data )
 {
-  // ºÏ²¢Çø¼ä
+  // åˆå¹¶åŒºé—´
   auto l = first_index, r = last_index;
   auto beg = buffer_.begin(), end = buffer_.end();
   auto lef = lower_bound( beg, end, l, []( auto& a, auto& b ) { return get<1>( a ) < b; } );
@@ -26,18 +26,18 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   if (lef != end) l = min( l, get<0>( *lef ) );
   if (rig != beg) r = max( r, get<1>( *prev( rig ) ) );
   
-  // µ±dataÒÑÔÚbuffer_ÖĞÊ±£¬Ö±½Ó·µ»Ø
+  // å½“dataå·²åœ¨buffer_ä¸­æ—¶ï¼Œç›´æ¥è¿”å›
   if ( lef != end && get<0>( *lef ) == l && get<1>( *lef ) == r ) {
     return;
   }
 
   buffer_size_ += 1 + r - l;
-  if ( lef == rig ) { // µ±buffer_ÖĞÃ»ÓĞdataÖØµşµÄ²¿·Ö
+  if ( lef == rig ) { // å½“buffer_ä¸­æ²¡æœ‰dataé‡å çš„éƒ¨åˆ†
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
   }
 
-  // ´Ó×ó±ß½ç¿ªÊ¼ºÏ²¢
+  // ä»å·¦è¾¹ç•Œå¼€å§‹åˆå¹¶
   buffer_size_ -= get<2>( *lef ).size();
   string s( move( get<2>( *lef++ ) ) );
   s.resize( 1 + r - l );
@@ -73,12 +73,12 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     return;
   }
   auto end_index = first_index + data.size();                  // data: [first_index, end_index)
-  auto last_index = next_index_ + output.available_capacity(); // ¿ÉÓÃ·¶Î§: [next_index_, last_index)
+  auto last_index = next_index_ + output.available_capacity(); // å¯ç”¨èŒƒå›´: [next_index_, last_index)
   if ( end_index < next_index_ || first_index >= last_index ) {
-    return; // ²»ÔÚ¿ÉÓÃ·¶Î§ÄÚ, Ö±½Ó·µ»Ø
+    return; // ä¸åœ¨å¯ç”¨èŒƒå›´å†…, ç›´æ¥è¿”å›
   }
 
-  // µ÷ÕûdataµÄ·¶Î§
+  // è°ƒæ•´dataçš„èŒƒå›´
   if ( last_index < end_index ) {
     end_index = last_index;
     data.resize( end_index - first_index );
@@ -89,18 +89,18 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     first_index = next_index_;
   }
 
-  // Èôdata¿ÉÒÔÖ±½ÓĞ´Èëoutput, ÔòÖ±½ÓĞ´Èë
+  // è‹¥dataå¯ä»¥ç›´æ¥å†™å…¥output, åˆ™ç›´æ¥å†™å…¥
   if ( first_index == next_index_ && ( buffer_.empty() || end_index < get<1>( buffer_.front() ) + 2 ) ) {
-    if ( buffer_.size() ) { // ÈôÖØµş, Ôòµ÷ÕûdataµÄ·¶Î§
+    if ( buffer_.size() ) { // è‹¥é‡å , åˆ™è°ƒæ•´dataçš„èŒƒå›´
       data.resize( min( end_index, get<0>( buffer_.front() ) ) - first_index );
     }
     push_to_output( move( data ), output );
-  } else { // ·ñÔò, ½«data²åÈëbuffer_
+  } else { // å¦åˆ™, å°†dataæ’å…¥buffer_
     buffer_push( first_index, end_index - 1, data );
   }
   had_last_ |= is_last_substring;
   
-  // ³¢ÊÔ½«buffer_ÖĞµÄÊı¾İĞ´Èëoutput
+  // å°è¯•å°†buffer_ä¸­çš„æ•°æ®å†™å…¥output
   buffer_pop(output);
 }
 

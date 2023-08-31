@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <queue>
 #include <stdexcept>
@@ -14,8 +14,8 @@ class ByteStream
 protected:
   enum State { CLOSED, ERROR };
   uint64_t capacity_;
-  uint64_t bytes_pushed_ {}; // ÒÑĞ´ÈëµÄ×Ö½ÚÊı
-  uint64_t bytes_popped_ {}; // ÒÑµ¯³öµÄ×Ö½ÚÊı
+  uint64_t bytes_pushed_ {}; // å·²å†™å…¥çš„å­—èŠ‚æ•°
+  uint64_t bytes_popped_ {}; // å·²å¼¹å‡ºçš„å­—èŠ‚æ•°
 
   unsigned char flag {};	// 0: normal, 1: closed, 2: error
   std::queue<std::string> buffer_data {};
@@ -24,7 +24,7 @@ protected:
 public:
   explicit ByteStream( uint64_t capacity );
 
-  // Ìá¹©ByteStreamµÄ reader ºÍ writer ½Ó¿ÚµÄ¸¨Öúº¯Êı
+  // æä¾›ByteStreamçš„ reader å’Œ writer æ¥å£çš„è¾…åŠ©å‡½æ•°
   Reader& reader();
   const Reader& reader() const;
   Writer& writer();
@@ -34,27 +34,27 @@ public:
 class Writer : public ByteStream
 {
 public:
-  void push( std::string data ) noexcept; // ÔÚ¿ÉÓÃÈİÁ¿ÔÊĞíµÄ·¶Î§ÄÚÏòÁ÷ÖĞĞ´ÈëÊı¾İ
+  void push( std::string data ) noexcept; // åœ¨å¯ç”¨å®¹é‡å…è®¸çš„èŒƒå›´å†…å‘æµä¸­å†™å…¥æ•°æ®
 
-  void close() noexcept; // ¹Ø±ÕÁ÷£¬²»ÔÊĞíÔÙÏòÁ÷ÖĞĞ´ÈëÊı¾İ
-  void set_error() noexcept; // Á÷ÖĞ³öÏÖ´íÎó£¬ÖÃÎ»´íÎó±êÖ¾
+  void close() noexcept; // å…³é—­æµï¼Œä¸å…è®¸å†å‘æµä¸­å†™å…¥æ•°æ®
+  void set_error() noexcept; // æµä¸­å‡ºç°é”™è¯¯ï¼Œç½®ä½é”™è¯¯æ ‡å¿—
 
-  bool is_closed() const noexcept;      // ÅĞ¶ÏÁ÷ÊÇ·ñÒÑ¹Ø±Õ
-  uint64_t available_capacity() const noexcept; // ¼ÆËãÁ÷ÖĞÊ£Óà¿ÉÓÃÈİÁ¿
-  uint64_t bytes_pushed() const noexcept;       // ¼ÆËãÁ÷ÖĞÒÑĞ´ÈëµÄ×Ö½ÚÊı
+  bool is_closed() const noexcept;      // åˆ¤æ–­æµæ˜¯å¦å·²å…³é—­
+  uint64_t available_capacity() const noexcept; // è®¡ç®—æµä¸­å‰©ä½™å¯ç”¨å®¹é‡
+  uint64_t bytes_pushed() const noexcept;       // è®¡ç®—æµä¸­å·²å†™å…¥çš„å­—èŠ‚æ•°
 };
 
 class Reader : public ByteStream
 {
 public:
-  std::string_view peek() const noexcept; // ·µ»ØÁ÷ÖĞÏÂÒ»¸öÊı¾İ¿éµÄÖ»¶ÁÊÓÍ¼
-  void pop( uint64_t len ) noexcept;      // ´ÓÁ÷ÖĞµ¯³öÖ¸¶¨³¤¶ÈµÄÊı¾İ¿é
+  std::string_view peek() const noexcept; // è¿”å›æµä¸­ä¸‹ä¸€ä¸ªæ•°æ®å—çš„åªè¯»è§†å›¾
+  void pop( uint64_t len ) noexcept;      // ä»æµä¸­å¼¹å‡ºæŒ‡å®šé•¿åº¦çš„æ•°æ®å—
 
-  bool is_finished() const noexcept; // ÅĞ¶ÏÁ÷ÊÇ·ñÒÑ¹Ø±ÕÇÒËùÓĞÊı¾İ¿é¶¼ÒÑµ¯³ö
-  bool has_error() const noexcept;   // ÅĞ¶ÏÁ÷ÊÇ·ñ³öÏÖ´íÎó
+  bool is_finished() const noexcept; // åˆ¤æ–­æµæ˜¯å¦å·²å…³é—­ä¸”æ‰€æœ‰æ•°æ®å—éƒ½å·²å¼¹å‡º
+  bool has_error() const noexcept;   // åˆ¤æ–­æµæ˜¯å¦å‡ºç°é”™è¯¯
 
-  uint64_t bytes_buffered() const noexcept; // ¼ÆËãµ±Ç°Á÷ÖĞÊ£ÓàµÄ×Ö½ÚÊı
-  uint64_t bytes_popped() const noexcept;   // ¼ÆËãÁ÷ÖĞÒÑµ¯³öµÄ×Ö½ÚÊı
+  uint64_t bytes_buffered() const noexcept; // è®¡ç®—å½“å‰æµä¸­å‰©ä½™çš„å­—èŠ‚æ•°
+  uint64_t bytes_popped() const noexcept;   // è®¡ç®—æµä¸­å·²å¼¹å‡ºçš„å­—èŠ‚æ•°
 };
 
 /*
