@@ -36,6 +36,9 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
   }
+
+  // 从左边界开始合并
+  buffer_size_ -= get<2>( *lef ).size();
   string s( move( get<2>( *lef++ ) ) );
   s.resize( 1 + r - l );
 
