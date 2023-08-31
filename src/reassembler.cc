@@ -49,11 +49,11 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   if ( fa == l ) {
     fc.resize( min( l + fc.size(), first_index ) - l );
     s = move( fc );
-    ranges::copy( data, s.begin() + first_index - 1 );
+    ranges::copy( data, s.begin() + first_index - l );
   } else {
     data.resize( min( l + data.size(), fa ) - l );
 	s = move( data );
-	ranges::copy( fc, s.begin() + fa - 1 );
+	ranges::copy( fc, s.begin() + fa - l );
   }
   s.resize( 1 + r - l );
 
