@@ -39,16 +39,16 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 
   // 从左边界开始合并
   buffer_size_ -= get<2>( *lef ).size();
-  string s( move( get<2>( *lef++ ) ) );
+  string s( move( get<2>( *lef ) ) );
   s.resize( 1 + r - l );
 
-  for ( auto&& it : views::iota( lef, rig ) ) {
+  for ( auto&& it : views::iota( next( lef ), rig ) ) {
 	auto& [a, b, c] = *it;
 	buffer_size_ -= c.size();
     ranges::copy(c, s.begin() + a - l);
   }
   ranges::copy(data, s.begin() + first_index - l);
-  buffer_.emplace( buffer_.erase( --lef, rig ), l, r, move( s ) );
+  buffer_.emplace( buffer_.erase( lef, rig ), l, r, move( s ) );
 }
 
 void Reassembler::buffer_pop( Writer& output ) {
