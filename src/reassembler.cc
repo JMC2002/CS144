@@ -25,10 +25,8 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   auto beg = buffer_.begin(), end = buffer_.end();
   auto lef = lower_bound( beg, end, l, []( auto& a, auto& b ) { return get<1>( a ) < b; } );
   auto rig = upper_bound( lef, end, r, []( auto& b, auto& a ) { return get<0>( a ) > b; } );
-  if ( lef != end )
-    l = min( l, get<0>( *lef ) );
-  if ( rig != beg )
-    r = max( r, get<1>( *prev( rig ) ) );
+  if ( lef != end ) l = min( l, get<0>( *lef ) );
+  if ( rig != beg ) r = max( r, get<1>( *prev( rig ) ) );
 
   // 当data已在buffer_中时，直接返回
   if ( lef != end && get<0>( *lef ) == l && get<1>( *lef ) == r ) {
@@ -42,26 +40,13 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
   }
 
   // 从左边界开始合并
-  string s;
-
-  auto& [fa, fb, fc] = *lef;
-  buffer_size_ -= fc.size();
-  if ( fa == l ) {
-    fc.resize( min( l + fc.size(), first_index ) - l );
-    s = move( fc );
-    ranges::copy( data, s.begin() + first_index - l );
-  } else {
-    data.resize( min( l + data.size(), fa ) - l );
-	s = move( data );
-	ranges::copy( fc, s.begin() + fa - l );
-  }
-  s.resize( 1 + r - l );
-
-  for ( auto&& it : views::iota( next( lef ), rig ) ) {
+  string s( 1 + r - l, 0 );
+  for ( auto&& it : views::iota( lef, rig ) ) {
     auto& [a, b, c] = *it;
     buffer_size_ -= c.size();
-    ranges::copy( c, s.begin() + a - l );
+    ranges::copy( move( c ), s.begin() + a - l );
   }
+  ranges::copy( move( data ), s.begin() + first_index - l );
   buffer_.emplace( buffer_.erase( lef, rig ), l, r, move( s ) );
 }
 
