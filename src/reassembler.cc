@@ -36,7 +36,8 @@ void Reassembler::buffer_push( uint64_t first_index, uint64_t last_index, std::s
 	buffer_.emplace( rig, l, r, move( data ) );
 	return;
   }
-  string s( 1 + r - l, 0 );
+  string s( move( get<2>( *lef++ ) ) );
+  s.resize( l + r - 1 );
 
   for ( auto&& it : views::iota( lef, rig ) ) {
 	auto& [a, b, c] = *it;
