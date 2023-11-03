@@ -23,5 +23,5 @@ TCPReceiverMessage TCPReceiver::send( const Writer& inbound_stream ) const
   return { isn_.transform( [&]( auto&& isn ) {
             return Wrap32::wrap( inbound_stream.bytes_pushed() + 1 + inbound_stream.is_closed(), isn );
           } ),
-           min<uint64_t>( inbound_stream.available_capacity(), UINT16_MAX ) };
+           (uint16_t)min<uint64_t>( inbound_stream.available_capacity(), UINT16_MAX ) };
 }
